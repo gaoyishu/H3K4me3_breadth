@@ -1,0 +1,27 @@
+#prepare the HOMER_annotation file using parseGTF.pl
+#because our database only contains the gff3, so add the '-gff3' behind your gff3 files.
+    parseGTF.pl /data/share_databases/Gmax_275_Wm82.a2.v1/annotation/Gmax_275_Wm82.a2.v1.gene_exons.gff3 ann  -gff3 > HOMMER_ann.txt
+
+#Before you can use these annotations in the file you created, you need to preprocess them with the program assignGenomeAnnotation to make a final annotation table:
+    assignGenomeAnnotation <ann peak file> < ann peak file> -prioritize <ann table file> > stats.txt
+    assignGenomeAnnotation HOMMER_ann.txt HOMMER_ann.txt -prioritize HOMMER_ann_final.txt > stats.txt
+    #the HOMMER_ann_final.txt is the final genome annotaiton files
+
+#create the HOMER genome of your glycine max genome.
+    #Loading Custom Genomes [loadGenome.pl]
+    loadGenome.pl -name Gmax2 -fasta /data/share_databases/Gmax_275_Wm82.a2.v1/assembly/Gmax_275_v2.0.fa -gff3 /data/share_databases/Gmax_275_Wm82.a2.v1/annotation/Gmax_275_Wm82.a2.v1.gene_exons.gff3 -org soybean > test.genomeHOMO
+    #your genome is in the HOMER genome database named Gmax2 after print annotatePeaks.pl
+
+#annotatePeaks.pl H3K4me3_N_ovla.HMO.final.bed Gmax2 > H3K4me3_N_ovla.HOM_anno.txt
+
+
+GOOD!!!
+
+#refined the annotation file because there is no updated annotation data for soybean, we should use genename to annotaion or perform KEGGpathway to see top 5%. 
+    #cut the redundant volume which only contains the peakID, chro, start, end, strand, annotaion and other.
+    awk -F '[\t]' '{print $1, $2, $3, $4, $5}' H3K4me3_N_ovla.HOM_anno.txt > H3K4me3_N_ovla.HOM_anno.refined.txt
+    #caculate the breadth of every peaks and in $5 volume
+    awk '{$5=$4-$3;print}' H3K4me3_N_ovla.HOM_anno.refined.txt > H3K4me3_N_ovla.HOM_anno.refined2.txt
+    #sort all the data depends on the $5
+    sort -rnk5 -t ' ' H3K4me3_N_ovla.HOM_anno.refined2.txt > H3K4me3_N_ovla.HOM_anno.refined2_sort.txt   r:reverse n:specify the number k5:volume5  t:sep 
+#Broad H3K4me3 peak should be more than 4KB which recognizedd in the CELL.
