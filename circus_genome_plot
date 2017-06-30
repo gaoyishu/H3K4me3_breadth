@@ -1,0 +1,38 @@
+#package: ggbio
+#package: GenomeRanges
+#package: Bioconductor
+#R
+
+library(ggbio)
+library(GenomicRanges)
+
+#use GenomicRanges forms Soybean Genome of GRanges format.
+
+soybeangenome <- GRanges(
++ seqnames = Rle(c("chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", 
++ "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20")),
++ ranges = IRanges(start = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), end = c(56831395, 48577505, 45779434, 52388848, 42234498, 51416163, 44630203, 47837022, 50189283, 51566898, 34766867, 40091314, 45874162, 49042192, 51756343, 37887014, 41641078, 58018742, 50746504, 47900577)))
+
+head(soybeangenome)
+
+#modify your sequence data, be sure that volume = c(chrom, start, end, strand, **)
+
+#read sequence data in df variable
+df <- read.csv("/Users/sango/Desktop/H3K4me3_N_ovla.GRange.txt", header = FALSE, sep = " ")
+
+#give volume name
+names(df)[1:5] <- c("chrom", "start", "end", "strand", "Genename")
+
+#form df of GRanges form to be used in ggbio. 
+dfGRange <- makeGRangesFromDataFrame(df)
+
+#plot by ggbio
+#make sure your own seuquence in the lowest layer which should be plot at first.
+p <- ggbio() + circle(dfGRange, geom = "rect", color = "steelblue") + circle(soybeangenome, geom = "ideo", fill = "black") + circle(soybeangenome, geom = "scale", size = 2) + circle(soybeangenome, geom = "text", aes(label = seqnames), vjust = 0, size = 3)
+
+#more information in website
+http://www.sthda.com/english/wiki/ggbio-visualize-genomic-data
+and 
+https://www.bioconductor.org/packages/devel/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.pdf
+and 
+http://bioconductor.org/packages/devel/bioc/vignettes/ggbio/inst/doc/ggbio.pdf
