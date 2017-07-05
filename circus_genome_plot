@@ -25,7 +25,7 @@ df <- read.csv("/Users/sango/Desktop/H3K4me3_N_ovla.GRange.txt", header = FALSE,
 names(df)[1:5] <- c("chrom", "start", "end", "strand", "Genename")
 
 #form df of GRanges form to be used in ggbio. 
-dfGRange <- makeGRangesFromDataFrame(df)
+dfGRange <- makeGRangesFromDataFrame(df, seqinfo=c(chr01=56831395, chr02=48577505, chr03=45779434, chr04=52388848, chr05=42234498, chr06=51416163, chr07=44630203, chr08=47837022, chr09=50189283, chr10=51566898, chr11=34766867, chr12=40091314, chr13=45874162, chr14=49042192, chr15=51756343, chr16=37887014, chr17=41641078, chr18=58018742, chr19=50746504, chr20=47900577))
 
 #plot by ggbio
 #make sure your own seuquence in the lowest layer which should be plot at first.
