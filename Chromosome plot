@@ -1,1 +1,41 @@
+#This code explain that how to plot your genes,peaks,locations in the chromosome location.
 
+#load package
+library(ggbio)
+library(GenomicFeatures)
+
+#load database in your variable
+NR_K4K9_gene <- read.csv("NR_K4K9_com_gene.gff3", sep = "\t", header = FALSE)
+head(NR_K4K9_gene)
+
+###############
+V1   V2      V3      V4 V5
+1 chr01 gene 1245513 1250153  -
+2 chr01 gene 2841569 2846006  +
+3 chr01 gene 3159945 3161005  +
+4 chr01 gene 3582060 3583811  +
+5 chr01 gene 4324079 4325876  -
+6 chr01 gene 4922421 4925287  -
+###############                                                                         V6
+1 ID=Glyma.01G013200.Wm82.a2.v1;Name=Glyma.01G013200;ancestorIdentifier=Glyma01g01690.v1.1
+2 ID=Glyma.01G027100.Wm82.a2.v1;Name=Glyma.01G027100;ancestorIdentifier=Glyma01g03321.v1.1
+3 ID=Glyma.01G030000.Wm82.a2.v1;Name=Glyma.01G030000;ancestorIdentifier=Glyma01g03670.v1.1
+4 ID=Glyma.01G034400.Wm82.a2.v1;Name=Glyma.01G034400;ancestorIdentifier=Glyma01g04107.v1.1
+5 ID=Glyma.01G039900.Wm82.a2.v1;Name=Glyma.01G039900;ancestorIdentifier=Glyma01g04670.v1.1
+6 ID=Glyma.01G044600.Wm82.a2.v1;Name=Glyma.01G044600;ancestorIdentifier=Glyma01g05230.v1.1
+             V7
+1 Stripped_Root
+2 Stripped_Root
+3 Stripped_Root
+4 Stripped_Root
+5 Stripped_Root
+6 Stripped_Root
+###############
+#Your data in V7 colume has two variable: nodule and stripped_root, plot according to them
+names(NR_K4K9_gene)[1:7] <- c("chrom", "genename", "start", "end", "strand", "annota", "cell_type")
+#GRanges creation should specify the colume function or name to let the software know which colume is start or end. Seqinfo specify their chromosome length.
+#If you want to plot according to their tissue, add (keep.extra.columns = TRUE) or software will remove them.
+NR_db <- makeGRangesFromDataFrame(NR_K4K9_gene, seqinfo = c(chr01=56831395, chr02=48577505, chr03=45779434, chr04=52388848, chr05=42234498, chr06=51416163, chr07=44630203, chr08=47837022, chr09=50189283, chr10=51566898, chr11=34766867, chr12=40091314, chr13=45874162, chr14=49042192, chr15=51756343, chr16=37887014, chr17=41641078, chr18=58018742, chr19=50746504, chr20=47900577), start.field = "start", end.field = "end", seqnames.field = "chrom", keep.extra.columns = TRUE)
+head (NR_db)
+#plot
+autoplot(NR_db, layout = "karyogram", aes(color = cell_type, fill = cell_type))+ scale_fill_giemsa() + theme(panel.background = element_rect(fill = "white")) + labs(title = "Difference Enrichment of H3K4me3&H3K9ac in nodule and stripped root", x = "chromosome size(bp)") + theme(title = tile_black)
